@@ -6,12 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
@@ -26,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.gesturedemo.ui.theme.GestureDemoTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +53,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    ClickDemo(modifier)
-    TapPressDemo(modifier)
+    Column {
+        ClickDemo(modifier)
+        TapPressDemo(modifier)
+        DragDemo(modifier)
+    }
 }
 
 
@@ -90,7 +99,7 @@ fun TapPressDemo(modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .padding(10.dp)
-                .background(Color.Blue)
+                .background(Color.Red)
                 .size(100.dp)
                 .pointerInput(Unit) {
                     detectTapGestures(
@@ -103,5 +112,27 @@ fun TapPressDemo(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(10.dp))
         Text(textState)
+    }
+}
+
+@Composable
+fun DragDemo(modifier: Modifier = Modifier) {
+
+    Box(modifier = modifier.fillMaxSize()) {
+
+        var xOffset by remember { mutableStateOf(0f) }
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(xOffset.roundToInt(), 0) }
+                .size(100.dp)
+                .background(Color.Green)
+                .draggable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberDraggableState { distance ->
+                        xOffset += distance
+                    }
+                )
+        )
     }
 }
